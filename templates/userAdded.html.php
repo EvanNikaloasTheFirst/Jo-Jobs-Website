@@ -1,0 +1,1 @@
+<?phpecho '<p>'.$user['firstname'] .' has been added</p>';?>

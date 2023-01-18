@@ -1,0 +1,1 @@
+<?php//var_dump($_SESSION['loggedIn']);$_SESSION['AdminLoggedIn'] = false;$_SESSION['StaffLoggedIn'] = false;$_SESSION['ClientLoggedIn'] = false;echo '<p>You have been logged out</p>';

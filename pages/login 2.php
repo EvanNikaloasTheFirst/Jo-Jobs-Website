@@ -1,0 +1,1 @@
+<?php//echo '<a  href="/user/logout'. '"><li>' . 'Log out' . '</li></a>';    ?>

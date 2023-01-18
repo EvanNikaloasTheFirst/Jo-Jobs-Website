@@ -1,0 +1,1 @@
+<title>Jobs by location</title><?php foreach($jobs as $job) { ?>    <blockquote>        <p>       <?= '<a  href = "/job/locationFilter?location=' . $job['location']  .  '"><li>' . nl2br($job['location']) . '</li></a>'; ?>        </p>    </blockquote><?php } ?>
