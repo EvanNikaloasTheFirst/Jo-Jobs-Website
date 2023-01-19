@@ -6,10 +6,13 @@ class Category
     private $categoriesTable;
     private $jobTable;
 
-    public function __construct($categoriesTable,$jobTable)
+    private $enquiry;
+//$categoriesTable,$jobTable,$enquiry);
+    public function __construct($categoriesTable,$jobTable,$enquiry)
     {
         $this->categoriesTable = $categoriesTable;
         $this->jobTable = $jobTable;
+        $this->enquiry = $enquiry;
     }
 
     public function home()
@@ -78,20 +81,24 @@ class Category
 
 return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
     }
+
     public function addCategory(){
 
-        return['templates' => 'addCategory.html.php','title' => ' Category List', 'variables' => []];
-
+        return['templates' => 'addCategory.html.php','title' => ' Job', 'variables' => []];
 
     }
 
-    public function addCategorySubmit(){
+    public function categorySubmit(){
+
         $job =
-//            ['id'=> $_POST['id'],
+
                 ['name'=> $_POST['name']];
-        $newCategory = $this->categoriesTable->insert($job);
-        $success = 'Your category has been added';
+        $newJob = $this->categoriesTable->insert($job);
+        $success = 'Your job has been updated';
 
         return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
+
+
     }
+
 }
