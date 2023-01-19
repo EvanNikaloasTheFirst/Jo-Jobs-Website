@@ -23,7 +23,7 @@
     <?=    '<a href="/Admin/delete?id=' . $job['id'] . '">Delete Job </a>';?>
     <?=    '<a href="/job/edit?id=' . $job['id'] . '">Edit Job </a>';?>
 
-                <?=    '<a href="/job/applicants?id=' . $job['id'] . '">View applicants </a>';?>
+                <?=    '<a href="/job/applicantlist?id=' . $job['id'] . '">View applicants </a>';?>
    <?php } ?>
 
 

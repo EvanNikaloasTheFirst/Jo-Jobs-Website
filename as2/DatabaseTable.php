@@ -124,12 +124,12 @@ class DatabaseTable {
         return $stmt->fetchAll();
     }
 
-    public function findOtherJobs($variable,$condition) {
+    public function findOtherJobs($variable,$condition,$variable2) {
 
         $stmt = $this->pdo->prepare('SELECT * FROM ' . $this->table . ' WHERE '. $variable.' '.$condition . '   :value');
 
         $criteria = [
-            'value' => $_SESSION[$variable]
+            'value' => $variable2
         ];
         $stmt->execute($criteria);
 
@@ -147,6 +147,13 @@ class DatabaseTable {
         $query = $this->pdo->prepare("UPDATE ". $table1 . " SET ". $column . "= 'N' WHERE id = :id");
         $query->execute(["id" => $_GET["id"]]);
         return $query->fetchAll();
+    }
+
+    function endingSoon($orderBy,$variable1){
+        $query = $this->pdo->prepare("SELECT * FROM " .$this->table . " ORDER BY " . $orderBy.  " ". $variable1." LIMIT 10");
+        $query->execute();
+        return $query->fetchAll();
+
     }
 
 }

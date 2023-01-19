@@ -4,21 +4,24 @@ namespace jobs\Controllers;
 class Category
 {
     private $categoriesTable;
+    private $jobTable;
 
-    public function __construct($categoriesTable)
+    public function __construct($categoriesTable,$jobTable)
     {
         $this->categoriesTable = $categoriesTable;
+        $this->jobTable = $jobTable;
     }
 
     public function home()
     {
-        $categories = $this->categoriesTable->findAll();
+
+        $variable1 = 'closingDate';
+        $orderBy = 'ASC';
+        $jobs = $this->jobTable->endingSoon($variable1,$orderBy);
 
         return ['templates' => 'index.html.php',
             'title' => 'Home',
-            'variables' => ["categories" => $categories
-
-            ]
+            'variables' => ["jobs" => $jobs]
         ];
     }
 
@@ -35,12 +38,13 @@ class Category
 
         $categories = $this->categoriesTable->findAll();
 
-        return ['template' => 'categorylist.html.php',
+        return ['templates' => 'categorylist.html.php',
             'title' => 'Category List',
             'variables' => [
                 'categories' => $categories
             ]
         ];
+
     }
 
 
@@ -53,26 +57,41 @@ class Category
     }
 
 
-    public function edit()
+    public function editCategory()
     {
-        if (isset($_POST['category'])) {
 
-            $this->categoriesTable->save($_POST['category']);
+        $variable1 = 'id';
+        $categories = $this->categoriesTable->find($variable1,$_GET['categoryId']);
 
-            header('location: /category/list');
-        } else {
-            if (isset($_GET['id'])) {
-                $result = $this->categoriesTable->find('id', $_GET['id']);
-                $category = $result[0];
-            } else {
-                $category = false;
-            }
 
-            return [
-                'template' => 'editcategory.html.php',
-                'variables' => ['category' => $category],
-                'title' => 'Edit Category'
-            ];
-        }
+        return['templates' => 'editCategoryForm.html.php','title' => ' Category List', 'variables' => ['categories' => $categories ]];
+
+    }
+//    }
+
+    public function editCategorySubmit(){
+        $job =
+            ['id'=> $_POST['id'],
+            'name'=> $_POST['name']];
+        $newJob = $this->categoriesTable->update($job);
+        $success = 'Your job has been updated';
+
+return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
+    }
+    public function addCategory(){
+
+        return['templates' => 'addCategory.html.php','title' => ' Category List', 'variables' => []];
+
+
+    }
+
+    public function addCategorySubmit(){
+        $job =
+//            ['id'=> $_POST['id'],
+                ['name'=> $_POST['name']];
+        $newCategory = $this->categoriesTable->insert($job);
+        $success = 'Your category has been added';
+
+        return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
     }
 }

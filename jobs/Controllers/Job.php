@@ -8,12 +8,18 @@ class Job
     private $pdo;
     private $jobTable;
     private $applicantsTable;
-    public function __construct($jobTable,$applicantsTable )
+
+    private $enquiry;
+
+    public function __construct($jobTable,$applicantsTable,$enquiry)
     {
 //        require "../Database.php";
         $this->pdo = $pdo ?? "";
+
         $this->applicantsTable = $applicantsTable;
         $this->jobTable = $jobTable;
+        $this->applicantsTable = $applicantsTable;
+        $this->enquiry = $enquiry;
 //        $this->categoriesTable = $categoriesTable;
     }
 
@@ -132,7 +138,8 @@ class Job
 
         $variable = 'userId';
         $condition = '=';
-        $jobs = $this->jobTable->findOtherJobs($variable,$condition);
+        $variable2 = $_SESSION[$variable];
+        $jobs = $this->jobTable->findOtherJobs($variable,$condition,$variable2);
 
 
         return ['templates' => 'job.html.php',
@@ -172,7 +179,7 @@ class Job
             $newJob = $this->jobTable->update($job);
         }
 
-
+$success = 'Your job has been updated';
 
         return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
 
@@ -218,16 +225,46 @@ class Job
 
     }
 
-    public function applicants(){
+    public function applicantlist(){
 
-        $jobs = $this->jobTable->find($variable1,$_GET['id']);
+        $variable1 = 'jobId';
+        $condition = '=';
+        $variable2 = 'id';
+        $applicants = $this->applicantsTable->findOtherJobs($variable1,$condition ,$_GET['id']);
 
 
 
+                return['templates' => 'applicantList.html.php','title' => ' Job', 'variables' => ['applicants'=> $applicants]];
 
     }
 
+    public function contact(){
 
+        return['templates' => 'contact.html.php','title' => ' Job', 'variables' => []];
 
+    }
 
+    public function contactSubmit(){
+
+        if (isset($_POST['submit'])) {
+
+            $Applicant = ['name' => $_POST['name']];
+            $newApplicant = $this->enquiry->insert($Applicant);
+        }
+
+        $success = 'Your job has been updated';
+        return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
+    }
+
+//if(isset($_POST['submit'])){
+//$job = ['title' => $_POST['title'],
+//'Description' => $_POST['description'],
+//'Salary' => $_POST['salary'],
+//'Location' => $_POST['location'],
+//'categoryId' => $_POST['categoryId'],
+//'closingDate' => $_POST['closingDate'],
+//'userId' => $_SESSION['userId']
+//
+//];
+//$newJob = $this->jobTable->insert($job);
 }

@@ -7,6 +7,9 @@ $pdo = $pdo ?? "" ;
 $databaseCategory = new DatabaseTable($pdo,'category','id');
 $category = $databaseCategory->findAll();
 
+echo '<a class="categoryLink" href="/category/list"><li>Category list</li></a>';
+
+https://as2-1.v.je/category/list
 foreach ($category as $categoryData) {
     echo '<a class="categoryLink" href="/category/jobs?categoryId=' . $categoryData['id'] . '"><li>' . $categoryData['name'] . '</li></a>';
 }

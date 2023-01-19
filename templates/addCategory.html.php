@@ -1,0 +1,1 @@
+<form action="addCategory" method="POST">        <input type="hidden" name="id" value=""/>        <label>Name</label>        <input type="text" name="name" value ="" />        <input type="submit" name="submit" value="Add" /></form>
