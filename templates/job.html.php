@@ -17,13 +17,13 @@
                  <?=  '<p>' . nl2br($job['description'])  . '</p>';  ?>
 
 <?php if ($_SESSION['userId'] != $job['userId'] || ($_SESSION['userId']) == 'null') {?>
-         <?=    '<a class="more" href="/job/apply?id=' . $job['id'] . '">Apply for this job</a>'; ?>
+         <?=    '<a class="more" href="/Applicants/apply?id=' . $job['id'] . '">Apply for this job</a>'; ?>
     <?php    } else { ?>
 
     <?=    '<a href="/Admin/delete?id=' . $job['id'] . '">Delete Job </a>';?>
     <?=    '<a href="/job/edit?id=' . $job['id'] . '">Edit Job </a>';?>
 
-                <?=    '<a href="/job/applicantlist?id=' . $job['id'] . '">View applicants </a>';?>
+                <?=    '<a href="/Applicants/applicantlist?id=' . $job['id'] . '">View applicants </a>';?>
    <?php } ?>
 
 

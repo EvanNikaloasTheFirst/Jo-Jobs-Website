@@ -8,26 +8,16 @@ class Category
 
     private $enquiry;
 //$categoriesTable,$jobTable,$enquiry);
-    public function __construct($categoriesTable,$jobTable,$enquiry)
+    public function __construct($categoriesTable)
     {
         $this->categoriesTable = $categoriesTable;
-        $this->jobTable = $jobTable;
-        $this->enquiry = $enquiry;
+//        $this->jobTable = $jobTable;
+//        $this->enquiry = $enquiry;
     }
 
-    public function home()
-    {
+//    home page displays the 10< soonest ending jobs aswell as checking if any user is logged into an account
 
-        $variable1 = 'closingDate';
-        $orderBy = 'ASC';
-        $jobs = $this->jobTable->endingSoon($variable1,$orderBy);
-
-        return ['templates' => 'index.html.php',
-            'title' => 'Home',
-            'variables' => ["jobs" => $jobs]
-        ];
-    }
-
+//    displays each available category to filter jobs by
     public function jobs()
     {
         $jobs = $this->categoriesTable->getJobsByCategory();

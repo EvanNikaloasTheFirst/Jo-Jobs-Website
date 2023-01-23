@@ -7,23 +7,54 @@ class Job
 {
     private $pdo;
     private $jobTable;
-    private $applicantsTable;
 
-    private $enquiry;
-
-    public function __construct($jobTable, $applicantsTable, $enquiry)
+    public function __construct($jobTable)
     {
-//        require "../Database.php";
         $this->pdo = $pdo ?? "";
-
-        $this->applicantsTable = $applicantsTable;
+//        $this->applicantsTable = $applicantsTable;
         $this->jobTable = $jobTable;
-        $this->applicantsTable = $applicantsTable;
-        $this->enquiry = $enquiry;
-//        $this->categoriesTable = $categoriesTable;
+//        $this->applicantsTable = $applicantsTable;
+//        $this->enquiry = $enquiry;
     }
 
-//FAQ Job ✅
+    public function home()
+    {
+        if ($_SESSION['ClientLoggedIn'] == false){
+            $_SESSION['ClientLoggedIn'] = false;
+        }else  {
+            $_SESSION['ClientLoggedIn'] = true;
+        }
+
+        if ($_SESSION['AdminLoggedIn'] == false){
+            $_SESSION['AdminLoggedIn'] = false;
+        }else  {
+            $_SESSION['AdminLoggedIn'] = true;
+        }
+
+        if ($_SESSION['StaffLoggedIn'] == false){
+            $_SESSION['StaffLoggedIn'] = false;
+        }else  {
+            $_SESSION['StaffLoggedIn'] = true;
+        }
+
+        if (isset($_SESSION['userId'])){
+            $_SESSION['userId'];
+        }else  {
+            $_SESSION['userId'] = false;
+        }
+
+        $variable1 = 'closingDate';
+        $orderBy = 'ASC';
+        $jobs = $this->jobTable->endingSoon($variable1,$orderBy);
+
+        return ['templates' => 'index.html.php',
+            'title' => 'Home',
+            'variables' => ["jobs" => $jobs]
+        ];
+    }
+
+//    displays each available category to filter jobs by
+
 
 
     public function jobs()
@@ -31,10 +62,11 @@ class Job
 
         $variable = 'userId';
         $condition = '!=';
+//        if the user is logged in , it will display all of the jobs bar the jobs the logged in user has posted
         if (isset($_SESSION['userId'])) {
 
             $jobs = $this->jobTable->findOtherJobs($variable, $condition);
-
+//else it will show all of the jobs posted
         } else {
             $jobs = $this->jobTable->getJobsByCategory();
         }
@@ -48,22 +80,19 @@ class Job
 
 
     }
-
+//displays the lists of jobs in a specified area
     public function locationFilter()
     {
         $variable = 'location';
-        $jobs = $this->jobTable->findX($variable);
+        $jobs = $this->jobTable->uniqueValues();
         return ['templates' => 'jobByLocation.html.php', 'title' => 'Find jobs by location', 'variables' => ['jobs' => $jobs]];
     }
 
-    //about Job ✅
+
     public function about()
     {
         return ['templates' => 'about.html.php', 'title' => 'About', 'variables' => []];
     }
-
-
-//FAQ Job
 
     public function FAQ()
     {
@@ -72,15 +101,7 @@ class Job
 
     public function list()
     {
-
-//        $userId = 'userId';
-//        if (isset($_SESSION['userId'])) {
-//
-//            $jobs = $this->jobTable->findOtherJobs();
-//
-//        } else {
         $jobs = $this->jobTable->findAll();
-//        }
 
         return ['templates' => 'JobsList.html.php',
             'title' => 'Job list',
@@ -92,11 +113,23 @@ class Job
 
     public function addJobs()
     {
+        if ($_SESSION['AdminLoggedIn'] == false) {
+            header('location: /User/login');
+            exit();
+        }else {
+            header('location: /job/addJobs');
 
+        }
 
+if (isset($_GET['id'])){
+    $jobs = $this->jobTable->find('id', $_GET['id']);
+}
+else {
+    $jobs = array();
+}
         return ['templates' => 'addJob.html.php',
             'title' => 'Add a job',
-            'variables' => [
+            'variables' => ['jobs' => $jobs
             ]
         ];
     }
@@ -126,21 +159,9 @@ class Job
         ];
     }
 
-    public function register()
-    {
-
-        return ['templates' => 'addUser.html.php',
-            'title' => 'Add user',
-            'variables' => [
-
-            ]
-        ];
-    }
-
-
+// displays all of the logged in users jobs posted
     public function myJobs()
     {
-
         $variable = 'userId';
         $condition = '=';
         $variable2 = $_SESSION[$variable];
@@ -162,7 +183,7 @@ class Job
         $variable1 = 'id';
         $jobs = $this->jobTable->find($variable1, $_GET['id']);
 
-        return ['templates' => 'addJob.html.php', 'title' => ' Job', 'variables' => ['jobs' => $jobs]];
+        return ['templates' => 'editJob.html.php', 'title' => ' Job', 'variables' => ['jobs' => $jobs]];
 
     }
 
@@ -192,94 +213,24 @@ class Job
 
     }
 
-    public function apply()
+
+    public function delete() {
+        $this->jobTable->delete($_GET['id']);
+
+        header('location: /job/locationslist');
+    }
+
+    public function archive() {
+        $this->jobTable->archive($_GET['id']);
+        header('location: /admin/list');
+    }
+
+    public function unarchive()
     {
-        $variable1 = 'id';
-        $jobs = $this->jobTable->find($variable1, $_GET['id']);
-
-        return ['templates' => 'applicants.html.php', 'title' => ' Job', 'variables' => ['jobs' => $jobs]];
-
+        $this->jobTable->unarchive($_GET['id']);
+        header('location: /User/list');
     }
 
 
-    public function applySubmit()
-    {
-        if (isset($_POST['submit'])) {
-            if ($_FILES['cv']['error'] == 0) {
-
-                $parts = explode('.', $_FILES['cv']['name']);
-
-                $extension = end($parts);
-
-                $fileName = uniqid() . '.' . $extension;
-
-                move_uploaded_file($_FILES['cv']['tmp_name'], 'cvs/' . $fileName);
-
-                $Applicant = [
-                    'name' => $_POST['name'],
-                    'email' => $_POST['email'],
-                    'details' => $_POST['details'],
-                    'jobId' => $_POST['jobId'],
-                    'cv' => $fileName
-                ];
-                $newApplicant = $this->applicantsTable->insert($Applicant);
-                $success = ' Your CV has been submitted';
-
-            } else {
-                echo 'There was an error uploading your CV';
-            }
-        }
-
-        return ['templates' => 'submissionPage.html.php', 'title' => ' Job', 'variables' => ['success' => $success]];
-
-    }
-
-    public function applicantlist()
-    {
-
-        $variable1 = 'jobId';
-        $condition = '=';
-        $variable2 = 'id';
-        $applicants = $this->applicantsTable->findOtherJobs($variable1, $condition, $_GET['id']);
-
-
-        return ['templates' => 'applicantList.html.php', 'title' => ' Job', 'variables' => ['applicants' => $applicants]];
-
-    }
-
-
-    public function contact()
-    {
-
-
-        return ['templates' => 'contact.html.php',
-            'title' => 'Add a job',
-            'variables' => [
-            ]
-        ];
-    }
-
-    public function contactSubmit()
-    {
-
-        if (isset($_POST['submit'])) {
-            $job = [
-                'name' => $_POST['name'],
-                'email' => $_POST['email'],
-                'telephone' => $_POST['telephone'],
-                'enquiry' => $_POST['enquiry'],
-                'userId' => $_SESSION['userId']
-            ];
-            $newJob = $this->enquiry->insert($job);
-
-
-        }
-        $success = 'Your enquiry has been added';
-        return ['templates' => 'submissionPage.html.php',
-            'title' => 'Add a job',
-            'variables' => ['success' => $success
-            ]
-        ];
-    }
 
 }

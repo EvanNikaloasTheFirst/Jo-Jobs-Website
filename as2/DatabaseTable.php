@@ -86,10 +86,12 @@ class DatabaseTable {
     }
 
     function getJobsByCategory() {
-        $jobs = $this->pdo->prepare('SELECT j.*, c.name as catName FROM job j JOIN category c ON c.id = j.categoryId WHERE categoryId = :categoryId');
-        $jobs->execute(["categoryId" => $_GET["categoryId"]]);
+        $jobs = $this->pdo->prepare('SELECT j.*, c.name as catName FROM job j JOIN category c ON c.id = j.categoryId WHERE j.categoryId = :categoryId AND Archived = :N');
+        $jobs->execute(["categoryId" => $_GET["categoryId"], "N" => 'N']);
         return $jobs->fetchAll();
+
     }
+
 
 
     function archive(){
@@ -106,6 +108,7 @@ class DatabaseTable {
 
     function uniqueValues(){
         $query = "SELECT DISTINCT location FROM " . $this->table ;
+
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -136,8 +139,9 @@ class DatabaseTable {
         return $stmt->fetchAll();
     }
 
-    function grantAccess(){
-        $query = $this->pdo->prepare("UPDATE user SET Admin = 'Y' WHERE id = :id");
+    function grantAccess($table1,$column){
+
+        $query = $this->pdo->prepare("UPDATE ". $table1 . " SET ". $column . "= 'Y' WHERE id = :id");
         $query->execute(["id" => $_GET["id"]]);
         return $query->fetchAll();
     }

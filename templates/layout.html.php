@@ -41,7 +41,7 @@ var_dump($_SESSION);
 
           ?>
             <li><a href="/job/FAQ">FAQs</a></li>
-            <li><a href="/job/contact">Contact</a></li>
+            <li><a href="/Enquiry/contact">Contact</a></li>
 	</ul>
 
 
