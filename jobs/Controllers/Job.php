@@ -1,5 +1,4 @@
 <?php
-
 namespace jobs\Controllers;
 //class Routes implements \CSY2028\Routes
 session_start();
@@ -84,7 +83,7 @@ class Job
     public function locationFilter()
     {
         $variable = 'location';
-        $jobs = $this->jobTable->uniqueValues();
+        $jobs = $this->jobTable->findX($variable);
         return ['templates' => 'jobByLocation.html.php', 'title' => 'Find jobs by location', 'variables' => ['jobs' => $jobs]];
     }
 
@@ -113,14 +112,9 @@ class Job
 
     public function addJobs()
     {
-        if ($_SESSION['AdminLoggedIn'] == false) {
-            header('location: /User/login');
-            exit();
-        }else {
-            header('location: /job/addJobs');
-
-        }
-
+        $this->isAdminLogged();
+        $this->isStaffLogged();
+        $this->isClientLogged();
 if (isset($_GET['id'])){
     $jobs = $this->jobTable->find('id', $_GET['id']);
 }
@@ -179,6 +173,9 @@ else {
 
     public function edit()
     {
+        $this->isAdminLogged();
+        $this->isStaffLogged();
+        $this->isClientLogged();
 
         $variable1 = 'id';
         $jobs = $this->jobTable->find($variable1, $_GET['id']);
@@ -190,7 +187,9 @@ else {
 
     public function editSubmit()
     {
-
+        $this->isAdminLogged();
+        $this->isStaffLogged();
+        $this->isClientLogged();
         if (isset($_POST['submit'])) {
 
             $job =
@@ -215,6 +214,9 @@ else {
 
 
     public function delete() {
+        $this->isAdminLogged();
+        $this->isStaffLogged();
+        $this->isClientLogged();
         $this->jobTable->delete($_GET['id']);
 
         header('location: /job/locationslist');
@@ -227,8 +229,30 @@ else {
 
     public function unarchive()
     {
+        $this->isAdminLogged();
+        $this->isStaffLogged();
+        $this->isClientLogged();
         $this->jobTable->unarchive($_GET['id']);
         header('location: /User/list');
+    }
+
+public function isAdminLogged(){
+    if (!$_SESSION['AdminLoggedIn']) {
+        header('location: /User/login');
+        exit();
+    }
+}
+    public function isClientLogged(){
+        if (!$_SESSION['ClientLoggedIn']) {
+            header('location: /User/login');
+            exit();
+        }
+    }
+    public function isStaffLogged(){
+        if (!$_SESSION['StaffLoggedIn']) {
+            header('location: /User/login');
+            exit();
+        }
     }
 
 

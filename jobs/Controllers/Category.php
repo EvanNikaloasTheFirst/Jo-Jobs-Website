@@ -44,6 +44,8 @@ class Category
 
     public function delete()
     {
+        $this->isAdminLogged();
+        $this->isStaffLogged();
         $this->categoriesTable->delete($_POST['id']);
 
         header('location: /category/list');
@@ -52,6 +54,8 @@ class Category
 
     public function editCategory()
     {
+        $this->isAdminLogged();
+        $this->isStaffLogged();
 
         $variable1 = 'id';
         $categories = $this->categoriesTable->find($variable1,$_GET['categoryId']);
@@ -63,6 +67,8 @@ class Category
 //    }
 
     public function editCategorySubmit(){
+        $this->isAdminLogged();
+        $this->isStaffLogged();
         $job =
             ['id'=> $_POST['id'],
             'name'=> $_POST['name']];
@@ -73,12 +79,16 @@ return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' =
     }
 
     public function addCategory(){
+        $this->isAdminLogged();
+        $this->isStaffLogged();
 
         return['templates' => 'addCategory.html.php','title' => ' Job', 'variables' => []];
 
     }
 
     public function categorySubmit(){
+        $this->isAdminLogged();
+        $this->isStaffLogged();
 
         $job =
 
