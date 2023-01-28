@@ -1,1 +1,0 @@
-<?php$_SESSION['AdminLoggedIn'] = false;$_SESSION['StaffLoggedIn'] = false;$_SESSION['ClientLoggedIn'] = false;if ( $_SESSION['AdminLoggedIn'] == false) {    echo '<a  href="/user/login' . '"><li>' . 'Log in' . '</li></a>';} else{    echo '<a  href="/user/logout' . '"><li>' . 'Log out' . '</li></a>';}//var_dump($_SESSION);

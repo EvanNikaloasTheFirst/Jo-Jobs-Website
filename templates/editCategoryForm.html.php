@@ -1,1 +1,0 @@
-<form action="editCategory" method="POST">    <?php   foreach ($categories as $job) { ?>        <input type="hidden" name="id" value="<?= $_GET['categoryId'] ?? ''; ?>"/>        <label>Name</label>        <input type="text" name="name" value ="<?=$job['name'] ?? '' ?>" />        <input type="submit" name="submit" value="Add" />    <?php } ?></form>

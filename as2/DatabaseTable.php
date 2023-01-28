@@ -94,21 +94,19 @@ class DatabaseTable {
 
 
 
-    function archive(){
-        $query = $this->pdo->prepare("UPDATE job SET Archived = 'Y' WHERE id = :id");
+    function archive($variable){
+        $query = $this->pdo->prepare('UPDATE '.$this->table  .' SET '. $variable . " = 'Y' WHERE id = :id");
         $query->execute(["id" => $_GET["id"]]);
-
     }
 
-    function unarchive(){
-        $query = $this->pdo->prepare("UPDATE job SET Archived = 'N' WHERE id = :id");
-        $query->execute(["id" => $_GET["id"]]);
 
-    }
+    function unarchive($variable){
+            $query = $this->pdo->prepare('UPDATE '.$this->table  .' SET '. $variable . " = 'N' WHERE id = :id");
+            $query->execute(["id" => $_GET["id"]]);
+        }
 
-    function uniqueValues(){
-        $query = "SELECT DISTINCT location FROM " . $this->table ;
-
+    function uniqueValues($variable){
+        $query = ('SELECT DISTINCT ' . $variable .' FROM ' . $this->table) ;
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();

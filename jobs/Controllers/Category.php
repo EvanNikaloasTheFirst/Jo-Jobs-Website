@@ -7,12 +7,12 @@ class Category
     private $jobTable;
 
     private $enquiry;
-//$categoriesTable,$jobTable,$enquiry);
-    public function __construct($categoriesTable)
+    public function __construct($categoriesTable )
     {
+//        $this->get = $get;
+//        $this->post = $post;
         $this->categoriesTable = $categoriesTable;
-//        $this->jobTable = $jobTable;
-//        $this->enquiry = $enquiry;
+
     }
 
 //    home page displays the 10< soonest ending jobs aswell as checking if any user is logged into an account
@@ -42,11 +42,11 @@ class Category
 
 
 
-    public function delete()
+    public function deleteCategory()
     {
-        $this->isAdminLogged();
         $this->isStaffLogged();
-        $this->categoriesTable->delete($_POST['id']);
+
+        $this->categoriesTable->delete($_GET['categoryId']);
 
         header('location: /category/list');
     }
@@ -54,20 +54,18 @@ class Category
 
     public function editCategory()
     {
-        $this->isAdminLogged();
         $this->isStaffLogged();
 
         $variable1 = 'id';
-        $categories = $this->categoriesTable->find($variable1,$_GET['categoryId']);
+        $categorie = $this->categoriesTable->find($variable1,$_GET['categoryId']);
 
 
-        return['templates' => 'editCategoryForm.html.php','title' => ' Category List', 'variables' => ['categories' => $categories ]];
+        return['templates' => 'addCategory.html.php','title' => 'Edit category', 'variables' => ['categorie' => $categorie ]];
 
     }
 //    }
 
     public function editCategorySubmit(){
-        $this->isAdminLogged();
         $this->isStaffLogged();
         $job =
             ['id'=> $_POST['id'],
@@ -75,30 +73,61 @@ class Category
         $newJob = $this->categoriesTable->update($job);
         $success = 'Your job has been updated';
 
-return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
+return['templates' => 'addCategory.html.php','title' => ' Edit category', 'variables' => ['success' =>   $success ]];
     }
+
+
 
     public function addCategory(){
-        $this->isAdminLogged();
+        $errors =[];
+        $success = '';
         $this->isStaffLogged();
+        if (isset($_GET['id'])){
+            $categories = $this->categoriesTable->find('id', $_GET['id'])[0];
+        }
+else {
+    $categories = array();
+}
+return['templates' => 'addCategory.html.php','title' => 'Add category', 'variables' => ['categories' => $categories, 'success' => $success]];
 
-        return['templates' => 'addCategory.html.php','title' => ' Job', 'variables' => []];
+}
+
+
+
+
+public function addCategorySubmit(){
+        $this->isStaffLogged();
+        $job = ['name'=> $_POST['name']];
+        $errors = $this->testAddCategory($job);
+        if (count($errors) == 0) {
+            $success = $this->categoriesTable->insert($job);
+            $response = 'Your category has been added';
+        }
+        else {
+            $success = array_values($errors);
+            $response = 'Your category couldn not  be added';
+
+        }
+
+
+        return['templates' => 'addCategory.html.php','title' => 'Add category', 'variables' => ['success' =>   $success, 'response'=>$response ]];
+
 
     }
 
-    public function categorySubmit(){
-        $this->isAdminLogged();
-        $this->isStaffLogged();
+    public function testAddCategory($job){
+        $errors = [];
+        if ($job['name'] == ''){
+            $errors[] = 'You must enter a value';
+        }
 
-        $job =
-
-                ['name'=> $_POST['name']];
-        $newJob = $this->categoriesTable->insert($job);
-        $success = 'Your job has been updated';
-
-        return['templates' => 'submissionPage.html.php','title' => ' Job', 'variables' => ['success' =>   $success ]];
-
-
+        return $errors;
+    }
+    public function isStaffLogged(){
+        if ($_SESSION['StaffLoggedIn'] == false &&  $_SESSION['AdminLoggedIn'] == false) {
+            header('location: /User/login');
+            exit();
+        }
     }
 
 }
