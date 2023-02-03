@@ -1,4 +1,4 @@
-
+<?php error_reporting(0); ?>
 <title>Jo's Jobs - Home</title>
 <main>
 <p>Welcome to Jo's Jobs, we're a recruitment agency based in Northampton.

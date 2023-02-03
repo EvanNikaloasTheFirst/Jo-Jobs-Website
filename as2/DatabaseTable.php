@@ -1,4 +1,5 @@
 <?php
+// Contains the functions and tools used to access the database
 namespace as2;
 class DatabaseTable {
     private $pdo;

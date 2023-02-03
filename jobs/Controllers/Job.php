@@ -21,6 +21,7 @@ class Job
         $_SESSION['ClientLoggedIn'];
         $_SESSION['AdminLoggedIn'];
         $_SESSION['userId'];
+
         if ($_SESSION['ClientLoggedIn'] == false){
             $_SESSION['ClientLoggedIn'] = false;
         }else  {

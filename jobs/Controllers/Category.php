@@ -1,133 +1,144 @@
 <?php
+
 namespace jobs\Controllers;
-//session_start();
+
 class Category
 {
-    private $categoriesTable;
+    private $applicantsTable;
+
+
     private $jobTable;
 
-    private $enquiry;
-    public function __construct($categoriesTable )
+
+    public function __construct($Category)
     {
-//        $this->get = $get;
-//        $this->post = $post;
-        $this->categoriesTable = $categoriesTable;
 
-    }
-
-//    home page displays the 10< soonest ending jobs aswell as checking if any user is logged into an account
-
-//    displays each available category to filter jobs by
-    public function jobs()
-    {
-        $jobs = $this->categoriesTable->getJobsByCategory();
-        return ['templates' => 'job.html.php', 'title' => ' Job', 'variables' => ["jobs" => $jobs]];
-
+        $this->Category = $Category;
 
 
     }
 
-    public function list() {
+    public function apply($jobs)
+    {
+        $success = '';
+        $variable1 = 'id';
+        $jobs = $this->jobTable->find($variable1, $_GET['id']);
 
-        $categories = $this->categoriesTable->findAll();
 
-        return ['templates' => 'categorylist.html.php',
-            'title' => 'Category List',
-            'variables' => [
-                'categories' => $categories
-            ]
+        return ['templates' => 'applicants.html.php', 'title' => 'Apply', 'variables' => ['jobs' => $jobs, 'success' => $success]];
+
+    }
+    public function applySubmit()
+    {
+        $errors = [];
+        $variable1 = 'id';
+        $parts = explode('.', $_FILES['cv']['name']);
+
+        $extension = end($parts);
+
+        $fileName = uniqid() . '.' . $extension;
+
+        move_uploaded_file($_FILES['cv']['tmp_name'], 'cvs/' . $fileName);
+
+        $Applicant = [
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'details' => $_POST['details'],
+            'jobId' => $_POST['jobId'],
+            'cv' => $fileName
         ];
 
-    }
 
-
-
-    public function deleteCategory()
-    {
-        $this->isStaffLogged();
-
-        $this->categoriesTable->delete($_GET['categoryId']);
-
-        header('location: /category/list');
-    }
-
-
-    public function editCategory()
-    {
-        $this->isStaffLogged();
 
         $variable1 = 'id';
-        $categorie = $this->categoriesTable->find($variable1,$_GET['categoryId']);
+        $jobs = $this->jobTable->find($variable1, $_POST['jobId']);
 
 
-        return['templates' => 'addCategory.html.php','title' => 'Edit category', 'variables' => ['categorie' => $categorie ]];
+        $errors += $this->testApplyInvalidCv($Applicant);
+        $errors += $this->testApplyInvalidEmail($Applicant);
+        $errors += $this->testApplyInvalidName($Applicant);
+//                $errors += $this->testValidateApply($Applicant);
 
-    }
-//    }
-
-    public function editCategorySubmit(){
-        $this->isStaffLogged();
-        $job =
-            ['id'=> $_POST['id'],
-            'name'=> $_POST['name']];
-        $newJob = $this->categoriesTable->update($job);
-        $success = 'Your job has been updated';
-
-return['templates' => 'addCategory.html.php','title' => ' Edit category', 'variables' => ['success' =>   $success ]];
-    }
-
-
-
-    public function addCategory(){
-        $errors =[];
-        $success = '';
-        $this->isStaffLogged();
-        if (isset($_GET['id'])){
-            $categories = $this->categoriesTable->find('id', $_GET['id'])[0];
-        }
-else {
-    $categories = array();
-}
-return['templates' => 'addCategory.html.php','title' => 'Add category', 'variables' => ['categories' => $categories, 'success' => $success]];
-
-}
-
-
-
-
-public function addCategorySubmit(){
-        $this->isStaffLogged();
-        $job = ['name'=> $_POST['name']];
-        $errors = $this->testAddCategory($job);
         if (count($errors) == 0) {
-            $success = $this->categoriesTable->insert($job);
-            $response = 'Your category has been added';
-        }
-        else {
+            $success =$this->applicantsTable->insert($Applicant);
+            $response = ' Your application has been submitted';
+        } else {
             $success = array_values($errors);
-            $response = 'Your category couldn not  be added';
+            $response = ' Your application has not been submitted';
 
         }
+        return ['templates' => 'applicants.html.php', 'title' => 'Apply', 'variables' => ['success' => $success, 'response' => $response,'jobs'=>$jobs]];
+
+    }
+//        }
+
+//    displays all of the applicants who have applied for a given job
+    public function applicantlist()
+    {
+        $this->loggedIn();
+
+        $variable1 = 'jobId';
+        $condition = '=';
+        $variable2 = 'id';
+        $applicants = $this->applicantsTable->findOtherJobs($variable1, $condition, $_GET['id']);
 
 
-        return['templates' => 'addCategory.html.php','title' => 'Add category', 'variables' => ['success' =>   $success, 'response'=>$response ]];
+        return ['templates' => 'applicantList.html.php', 'title' => 'Applicants', 'variables' => ['applicants' => $applicants]];
+
+    }
+
+
+
+    public function loggedIn()
+    {
+        if ($_SESSION['AdminLoggedIn'] == true || $_SESSION['ClientLoggedIn'] == true || $_SESSION['StaffLoggedIn'] == true) {
+
+        } else {
+            header('location: /User/login');
+            exit();
+        }
+    }
+
+    public function testValidateApply($job)
+    {
+        $errors = [];
+
+        if ($job['name'] == '') {
+            $errors[] = 'You must enter an name ';
+        }
+        if ($job['email'] == '') {
+            $errors[] = 'You must enter an name ';
+        }
+        if ($job['details'] == '') {
+            $errors[] = 'You must enter an name ';
+        }
+        if ($job['jobId'] == '') {
+            $errors[] = 'You must enter an name ';
+        }
 
 
     }
 
-    public function testAddCategory($job){
+    public function testApplyInvalidName($job){
         $errors = [];
         if ($job['name'] == ''){
             $errors[] = 'You must enter a value';
         }
-
         return $errors;
     }
-    public function isStaffLogged(){
-        if ($_SESSION['StaffLoggedIn'] == false &&  $_SESSION['AdminLoggedIn'] == false) {
-            header('location: /User/login');
-            exit();
+    public function testApplyInvalidEmail($job){
+        $errors = [];
+        if ($job['email'] == ''){
+            $errors[] = 'You must enter a value';
         }
+        return $errors;
+    }
+    public function testApplyInvalidCv($job){
+        $errors = [];
+        if ($job['cv'] == ''){
+            $errors[] = 'You must enter a value';
+        }
+        return $errors;
     }
 
 }
