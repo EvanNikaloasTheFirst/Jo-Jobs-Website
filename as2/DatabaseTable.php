@@ -1,4 +1,5 @@
 <?php
+// Contains the functions and tools used to access the database
 namespace as2;
 class DatabaseTable {
     private $pdo;
@@ -86,26 +87,27 @@ class DatabaseTable {
     }
 
     function getJobsByCategory() {
-        $jobs = $this->pdo->prepare('SELECT j.*, c.name as catName FROM job j JOIN category c ON c.id = j.categoryId WHERE categoryId = :categoryId');
-        $jobs->execute(["categoryId" => $_GET["categoryId"]]);
+        $jobs = $this->pdo->prepare('SELECT j.*, c.name as catName FROM job j JOIN category c ON c.id = j.categoryId WHERE j.categoryId = :categoryId AND Archived = :N');
+        $jobs->execute(["categoryId" => $_GET["categoryId"], "N" => 'N']);
         return $jobs->fetchAll();
+
     }
 
 
-    function archive(){
-        $query = $this->pdo->prepare("UPDATE job SET Archived = 'Y' WHERE id = :id");
+
+    function archive($variable){
+        $query = $this->pdo->prepare('UPDATE '.$this->table  .' SET '. $variable . " = 'Y' WHERE id = :id");
         $query->execute(["id" => $_GET["id"]]);
-
     }
 
-    function unarchive(){
-        $query = $this->pdo->prepare("UPDATE job SET Archived = 'N' WHERE id = :id");
-        $query->execute(["id" => $_GET["id"]]);
 
-    }
+    function unarchive($variable){
+            $query = $this->pdo->prepare('UPDATE '.$this->table  .' SET '. $variable . " = 'N' WHERE id = :id");
+            $query->execute(["id" => $_GET["id"]]);
+        }
 
-    function uniqueValues(){
-        $query = "SELECT DISTINCT location FROM " . $this->table ;
+    function uniqueValues($variable){
+        $query = ('SELECT DISTINCT ' . $variable .' FROM ' . $this->table) ;
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -124,20 +126,21 @@ class DatabaseTable {
         return $stmt->fetchAll();
     }
 
-    public function findOtherJobs($variable,$condition) {
+    public function findOtherJobs($variable,$condition,$variable2) {
 
         $stmt = $this->pdo->prepare('SELECT * FROM ' . $this->table . ' WHERE '. $variable.' '.$condition . '   :value');
 
         $criteria = [
-            'value' => $_SESSION[$variable]
+            'value' => $variable2
         ];
         $stmt->execute($criteria);
 
         return $stmt->fetchAll();
     }
 
-    function grantAccess(){
-        $query = $this->pdo->prepare("UPDATE user SET Admin = 'Y' WHERE id = :id");
+    function grantAccess($table1,$column){
+
+        $query = $this->pdo->prepare("UPDATE ". $table1 . " SET ". $column . "= 'Y' WHERE id = :id");
         $query->execute(["id" => $_GET["id"]]);
         return $query->fetchAll();
     }
@@ -147,6 +150,13 @@ class DatabaseTable {
         $query = $this->pdo->prepare("UPDATE ". $table1 . " SET ". $column . "= 'N' WHERE id = :id");
         $query->execute(["id" => $_GET["id"]]);
         return $query->fetchAll();
+    }
+
+    function endingSoon($orderBy,$variable1){
+        $query = $this->pdo->prepare("SELECT * FROM " .$this->table . " ORDER BY " . $orderBy.  " ". $variable1." LIMIT 10");
+        $query->execute();
+        return $query->fetchAll();
+
     }
 
 }

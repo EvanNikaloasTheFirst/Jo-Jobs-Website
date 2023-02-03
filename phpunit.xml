@@ -1,0 +1,1 @@
+<?xml version="1.0"?><phpunit>    <testsuites>        <testsuite name ="tests">            <directory>tests</directory>        </testsuite>    </testsuites></phpunit><!--        docker compose run -w /websites/as2-1 phpunit .-->

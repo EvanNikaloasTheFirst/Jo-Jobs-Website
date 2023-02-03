@@ -1,6 +1,4 @@
-<?php
-var_dump($_SESSION);
-?>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -41,7 +39,7 @@ var_dump($_SESSION);
 
           ?>
             <li><a href="/job/FAQ">FAQs</a></li>
-
+            <li><a href="/Enquiry/contact">Contact</a></li>
 	</ul>
 
 
