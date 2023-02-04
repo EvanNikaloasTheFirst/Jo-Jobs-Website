@@ -8,5 +8,9 @@ $routes = new \jobs\Routes();
 $entryPoint = new \as2\EntryPoint($routes);
 
 $entryPoint->run();
+
+$_SESSION['ClientLoggedIn'];
+$_SESSION['AdminLoggedIn'];
+$_SESSION['userId'];
 ?>
 

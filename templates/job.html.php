@@ -27,7 +27,7 @@
 
                 <?php } else if ($job['Archived'] == 'N' && $_SESSION['AdminLoggedIn'] == true || $_SESSION['StaffLoggedIn'] == true){?>
                     <a href="/job/archive?id=<?=$job['id']?>">Archive this job</a>
-                <?=    '<a href="/Admin/delete?id=' . $job['id'] . '">Delete Job </a>';?>
+                <?=    '<a href="/job/delete?id=' . $job['id'] . '">Delete Job </a>';?>
                 <?=    '<a href="/job/edit?id=' . $job['id'] . '">Edit Job </a>';?>
                 <?=    '<a href="/Applicants/applicantlist?id=' . $job['id'] . '">View applicants </a>';?>
 
