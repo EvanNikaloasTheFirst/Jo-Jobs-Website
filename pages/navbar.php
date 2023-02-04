@@ -13,7 +13,7 @@ echo '<a class="categoryLink" href="/job/addJobs"><li>Add jobs</li></a>';
 
 
 foreach ($category as $categoryData) {
-    echo '<a class="categoryLink" href="/category/jobs?categoryId=' . $categoryData['id'] . '"><li>' . $categoryData['name'] . '</li></a>';
+    echo '<a class="categoryLink" href="/job/jobs?categoryId=' . $categoryData['id'] . '"><li>' . $categoryData['name'] . '</li></a>';
 }
 
 ?>

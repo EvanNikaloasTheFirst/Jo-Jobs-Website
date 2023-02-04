@@ -18,6 +18,7 @@ class Job
 
     public function home()
     {
+        error_reporting(0);
         $_SESSION['ClientLoggedIn'];
         $_SESSION['AdminLoggedIn'];
         $_SESSION['userId'];
@@ -65,7 +66,7 @@ class Job
 //        if the user is logged in , it will display all of the jobs bar the jobs the logged in user has posted
         if (isset($_SESSION['userId'])) {
 
-            $jobs = $this->jobTable->findOtherJobs($variable, $condition);
+            $jobs = $this->jobTable->findOtherJobs($variable, $condition,'id');
 //else it will show all of the jobs posted
         } else {
             $jobs = $this->jobTable->getJobsByCategory();
@@ -192,11 +193,16 @@ class Job
     public function edit()
     {
         $success = '';
-        $this->loggedIn();
-        $variable1 = 'id';
-        $jobs = $this->jobTable->find($variable1, $_GET['id']);
 
-        return ['templates' => 'addCategory.html.php', 'title' => 'Edit job', 'variables' => ['jobs' => $jobs,'success'=> $success]];
+        if (isset($_GET['id'])){
+            $job = $this->jobTable->find('id', $_GET['id'])[0];
+        }
+        else {
+            $job = array();
+        }
+
+
+        return ['templates' => 'addJob.html.php', 'title' => 'Edit job', 'variables' => ['job' => $job,'success'=> $success]];
 
     }
 
@@ -219,8 +225,9 @@ class Job
                 ];
 
             $newJob = $this->jobTable->update($job);
-                $success = 'Your job has been updated';
-        return ['templates' => 'addCategory.html.php', 'title' => ' Edit job', 'variables' => ['success' => $success]];
+            $response = 'Updated successfully';
+             $success = 0;
+        return ['templates' => 'addJob.html.php', 'title' => ' Edit job', 'variables' => ['success' => $success, 'response' => $response]];
 
     }
 // Deletes the selected job
@@ -228,7 +235,7 @@ class Job
         $this->loggedIn();
         $this->jobTable->delete($_GET['id']);
 
-        header('location: /job/locationslist');
+        header('location: /job/list');
     }
 
     public function archive() {
