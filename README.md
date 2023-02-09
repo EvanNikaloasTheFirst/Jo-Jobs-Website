@@ -1,6 +1,7 @@
 # Web_Programming_AS2
 PHP_Assignment_2
-# This repository contains the code for PHP_Assignment_2, a backend development project for a website using the LAMP stack. The purpose of this project was to demonstrate proficiency in server-side scripting and database integration using PHP and MySQL.
+
+This repository contains the code for PHP_Assignment_2, a backend development project for a website using the LAMP stack. The purpose of this project was to demonstrate proficiency in server-side scripting and database integration using PHP and MySQL.
 
 # Getting Started
 These instructions will help you set up the project on your local machine for development and testing purposes.
