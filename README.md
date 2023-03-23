@@ -51,3 +51,5 @@ Displayed jobs that are about to reach the closing date on the website's home pa
 Added a form on the contact page to store the inquiry instead of sending it via email, and created a system to list previous inquiries and which member of staff dealt with them.
 
 I achieved an A.
+
+<img width="1437" alt="Screenshot 2023-03-23 at 01 25 22" src="https://user-images.githubusercontent.com/94329210/227075122-baa5f217-922d-4c51-849c-02b113dd3bc6.png">
